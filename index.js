@@ -1,7 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const app = express();
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 
 const port = process.env.PORT || 5000;
 require('dotenv').config();
@@ -20,34 +20,32 @@ async function run() {
   try {
     await client.connect();
     const warehouseCollection = client.db("warehousedb").collection("toys");
-    // create a document to insert
-    // const item = {
-    //   name: "toy1",
-    //   img: "toy image",
-    //   description: "good toy",
-    //   price: "50",
-    //   quantity: "32",
-    //   supplier: "salam",
-    //   sold: "12",
-    // };
-    // const result = await warehouseCollection.insertOne(item);
-    // console.log(`A document was inserted with the _id: ${result.insertedId}`);
+
 
     // get all items
+    // http://localhost:5000/toys
     app.get('/toys', async (req,res) =>{
         const query = {};
         const result = await warehouseCollection.find(query).toArray();
         res.send(result)
     })
 
+    // find one item 
+    app.get('/item/:id', async (req,res) =>{
+        const id = req.params.id;
+        const filter = {_id: ObjectId(id)};
+        const result = await warehouseCollection.findOne(filter);
+        res.send(result)
+    })
 
-    // get one item
+
+    // create one item
+    // http://localhost:5000/toys
     app.post('/item', async (req, res)=>{
         const item = req.body;
         const result = await warehouseCollection.insertOne(item);
     console.log(`A document was inserted with the _id: ${result.insertedId}`);
     res.send({message: "item added"})
-
     })
 
     //update item
