@@ -48,20 +48,12 @@ async function run() {
     });
 
     //update item
+    // http://localhost:5000/item/6274a3425a04790168facc8c
     app.put("/item/:id", async (req, res) => {
-      const updatedData = req.body;
       const id = req.params.id;
       const filter = { _id: ObjectId(id) };
-      const updateItem = {
-        $set: {
-          name : updatedData.name,
-          img: updatedData.img,
-          description: updatedData.description,
-          price: updatedData.price,
-          quantity: updatedData.quantity,
-          supplier: updatedData.supplier,
-          sold: updatedData.sold,
-        },
+      const updateItem = {        
+        $set: req.body,
       };
       const result = await warehouseCollection.updateOne(filter, updateItem);
 
@@ -69,6 +61,15 @@ async function run() {
     });
 
     // delete item
+    // http://localhost:5000/item/6274a3425a04790168facc8c
+    app.delete("/item/:id", async (req, res) => {
+        const id = req.params.id;
+        const filter = { _id: ObjectId(id) };
+        const result = await warehouseCollection.deleteOne(filter);
+  
+        res.send({message: "item deleted"})
+      });
+
   } finally {
   }
 }
