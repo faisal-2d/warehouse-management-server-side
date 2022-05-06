@@ -21,19 +21,24 @@ async function run() {
     await client.connect();
     const warehouseCollection = client.db("warehousedb").collection("toys");
     // create a document to insert
-    const item = {
-      name: "toy1",
-      img: "toy image",
-      description: "good toy",
-      price: "50",
-      quantity: "32",
-      supplier: "salam",
-      sold: "12",
-    };
-    const result = await warehouseCollection.insertOne(item);
-    console.log(`A document was inserted with the _id: ${result.insertedId}`);
+    // const item = {
+    //   name: "toy1",
+    //   img: "toy image",
+    //   description: "good toy",
+    //   price: "50",
+    //   quantity: "32",
+    //   supplier: "salam",
+    //   sold: "12",
+    // };
+    // const result = await warehouseCollection.insertOne(item);
+    // console.log(`A document was inserted with the _id: ${result.insertedId}`);
 
     // get all items
+    app.get('/toys', async (req,res) =>{
+        const query = {};
+        const result = await warehouseCollection.find(query).toArray();
+        res.send(result)
+    })
 
 
     // get one item
