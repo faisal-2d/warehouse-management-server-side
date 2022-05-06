@@ -42,6 +42,13 @@ async function run() {
 
 
     // get one item
+    app.post('/item', async (req, res)=>{
+        const item = req.body;
+        const result = await warehouseCollection.insertOne(item);
+    console.log(`A document was inserted with the _id: ${result.insertedId}`);
+    res.send({message: "item added"})
+
+    })
 
     //update item
 
