@@ -19,17 +19,17 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     await client.connect();
-    const warehouseCollection = client.db("warehousedb").collection("toys");
+    const warehouseCollection = client.db("warehousedb").collection("fruits");
 
     // get all items
-    // http://localhost:5000/toys
-    app.get("/toys", async (req, res) => {
+    // http://localhost:5000/items
+    app.get("/items", async (req, res) => {
       const query = {};
       const result = await warehouseCollection.find(query).toArray();
       res.send(result);
     });
 
-    // find one item
+    // find one item by id
     // http://localhost:5000/item/6274a3425a04790168facc8c
     app.get("/item/:id", async (req, res) => {
       const id = req.params.id;
@@ -37,13 +37,20 @@ async function run() {
       const result = await warehouseCollection.findOne(filter);
       res.send(result);
     });
+    // find one item by email
+    // http://localhost:5000/addedby/abdullah71faisal@gamil.com
+    app.get("/addedby/:email", async (req, res) => {
+      const email = req.params.email;
+      const filter = { addedby:email};
+      const result = await warehouseCollection.find(filter).toArray();
+      res.send(result);
+    });
 
     // create one item
-    // http://localhost:5000/toys
+    // http://localhost:5000/item
     app.post("/item", async (req, res) => {
       const item = req.body;
       const result = await warehouseCollection.insertOne(item);
-      console.log(`A document was inserted with the _id: ${result.insertedId}`);
       res.send({ message: "item added" });
     });
 
@@ -56,7 +63,6 @@ async function run() {
         $set: req.body,
       };
       const result = await warehouseCollection.updateOne(filter, updateItem);
-
       res.send({message: "item updated"})
     });
 
@@ -65,8 +71,7 @@ async function run() {
     app.delete("/item/:id", async (req, res) => {
         const id = req.params.id;
         const filter = { _id: ObjectId(id) };
-        const result = await warehouseCollection.deleteOne(filter);
-  
+        const result = await warehouseCollection.deleteOne(filter);  
         res.send({message: "item deleted"})
       });
 
